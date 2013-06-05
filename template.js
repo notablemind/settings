@@ -1,0 +1,1 @@
+module.exports = '<div class="settings-manager"><div data-ng-repeat="page in settings.pages" class="page"><div class="title">{{page.title}}</div><div data-ng-repeat="setting in page.settings" class="setting-form"><form name="setting-form"><div data-setting="setting" class="setting"></div></form></div></div></div>';

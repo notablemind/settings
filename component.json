@@ -1,0 +1,24 @@
+{
+  "name": "settings",
+  "repo": "notablemind/settings",
+  "description": "Settings manager - angular component",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": [
+    "index.js",
+    "template.js",
+    "plugins/bool.js",
+    "plugins/bool-template.js",
+    "plugins/text.js",
+    "plugins/text-template.js",
+    "plugins/radio.js",
+    "plugins/radio-template.js"
+  ],
+  "styles": [
+    "settings.styl"
+  ]
+}

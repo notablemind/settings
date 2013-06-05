@@ -1,0 +1,7 @@
+.settings-manager
+  .page(data-ng-repeat='page in settings.pages')
+    .title {{page.title}}
+    .setting-form(data-ng-repeat='setting in page.settings')
+      form(name='setting-form')
+        .setting(data-setting='setting')
+  

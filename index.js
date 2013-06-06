@@ -53,6 +53,37 @@ SettingsManager.prototype.load = function (data) {
   }
 };
 
+/** get a list of settings values **/
+SettingsManager.prototype.getList = function (data) {
+  var res = [];
+  for (var i=0; i<data.length; i++) {
+    res.push(this.named[data[i]].value);
+  }
+  return res;
+};
+
+/** { key: settingName, ... } -> { key: settingValue } **/
+SettingsManager.prototype.getHash = function (data) {
+  var res = {}
+    , keys = Object.keys(data);
+  for (var i=0; i<keys.length; i++) {
+    res[keys[i]] = this.named[data[keys[i]]].value;
+  }
+  return res;
+};
+
+/** { settingName: value, ... } -> { settingValue: value, ... } */
+SettingsManager.prototype.getHashKeys = function (data) {
+  var res = {}
+    , keys = Object.keys(data);
+  for (var i=0; i<keys.length; i++) {
+    res[this.named[keys[i]].value] = data[keys[i]];
+  }
+  return res;
+};
+
+
+
 module.exports = {
   deps: {},
   directive: function() {

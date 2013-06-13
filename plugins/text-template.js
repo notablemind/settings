@@ -1,1 +1,0 @@
-module.exports = '<input ng-model="setting.value" name="setting" type="text"/><p>{{setting.description}}</p>';

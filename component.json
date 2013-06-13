@@ -1,7 +1,7 @@
 {
   "name": "settings",
   "repo": "notablemind/settings",
-  "description": "Settings manager - angular component",
+  "description": "Settings manager",
   "version": "0.0.1",
   "keywords": [],
   "dependencies": {},

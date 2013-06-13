@@ -1,0 +1,26 @@
+{
+  "name": "settings",
+  "version": "0.0.0",
+  "description": "Settings manager",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/notablemind/settings.git"
+  },
+  "keywords": [
+    "settings",
+    "manager"
+  ],
+  "author": "Jared Forsyth <jared@jaredforsyth.com>",
+  "license": "MIT",
+  "readmeFilename": "Readme.md",
+  "devDependencies": {
+    "chai": "~1.6.1"
+  }
+}

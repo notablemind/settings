@@ -1,7 +1,7 @@
 
 # settings
 
-  Settings manager - angular component
+  Settings manager
 
 ## Installation
 
@@ -9,53 +9,43 @@
 
 ## API
 
-### SettingsManager(structure)
+### getSettings('name') -> SettingsManager
 
-#### Settings structure
+Get a settingsmanager of the given name. If none exists, one is created.
+The default settingsmanager is named "default".
 
-    [
-      {
-        title: str,
-        [type: str,]
-        settings: [
-          {
-            name: str,
-            [type: str,]
-            value: ?,
-            description: str,
-            [other attrs depending on the type]
-          }, ...
-        ]
-      }, ...
-    ]
+### new SettingsManager()
+
+All of the settingsmanager functions are aliased onto mondule.exports for the
+default manager.
+
+#### add(item)
+
+Item is either a single
+
+    {
+      name: "str",
+      value: mixed,
+      description: "str",
+      [type: "str",]
+      [other attrs based on type]
+    }
+
+Or a container
+
+    {
+      name: "str",
+      description: "str",
+      settings: [item, item, ...],
+      [type: "str",]
+    }
+
+Nested settings will be accessible by using "name.[name. ...]key".
 
 #### get(name) -> value
 #### set(name, value) -> null
 #### json() -> JSON of the settings
 #### load({name: value, ...})
-
-### Default Types
-
-#### keyboard-shortcut (soon to be "type what you want")
-#### bool (rendered as a checkbox)
-#### radio (rendered as radio buttons)
-
-### Plugin API
-
-#### register(type, plugin)
-
-Plugin:
-
-    {
-      validate: function (value, setting) ->
-         (null == valid | string == error message)
-      template: str. This is rendered with the setting scope, with vbls
-        - setting: {setting obj}
-        - validate: fn
-    }
-
-Plugin components are *not* to register themselves. They are, by
-convention, to expose this plugin object as the module.exports.
 
 ## License
 

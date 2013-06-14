@@ -47,6 +47,9 @@ SettingsManager.prototype = {
     var values = {};
     var names = Object.keys(this.named);
     for (var i=0; i<names.length; i++) {
+      if (typeof(this.named[names[i]].value) === 'undefined') {
+        continue;
+      }
       values[names[i]] = this.named[names[i]].value;
     }
     return values;

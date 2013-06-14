@@ -50,6 +50,10 @@ describe('SettingsManager, when initialized', function(){
       expect(mgr.getType('top.sub')).to.eql('bool');
     });
 
+    it('should only include settings in the json', function(){
+      expect(mgr.json()).to.eql({'top.sub':true, 'top.sub2': 'yes'});
+    });
+
   });
 
   describe('with multiple items', function(){

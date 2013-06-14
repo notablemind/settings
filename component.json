@@ -9,16 +9,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": [
-    "index.js",
-    "template.js",
-    "plugins/bool.js",
-    "plugins/bool-template.js",
-    "plugins/text.js",
-    "plugins/text-template.js",
-    "plugins/radio.js",
-    "plugins/radio-template.js"
+    "index.js"
   ],
-  "styles": [
-    "settings.styl"
-  ]
+  "styles": []
 }

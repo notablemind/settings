@@ -1,61 +1,128 @@
 
-var SettingsManager = function (name) {
+var valid = {
+  sub: /^\w+$/,
+  name: /^\w+(\.\w+)*$/
+};
+
+var SettingsManager = function (name, options) {
   this.name = name;
-  this.items = [];
-  this.named = {};
+  options = options || {};
+  options.log = options.log || console.error.bind(console);
+  this.options = options;
+  // { sub : { name: item, ... }, ... }
+  this.subs = { '': {} };
+  // { full:setting.name : {settingObj} }
+  this.settings = {};
 };
 
 SettingsManager.prototype = {
-  add: function (item) {
-    if (this.named[item.name]) {
-      throw new Error('name already used: ' + item.name);
+  // automatically prepends sub + ':' to key lookups and writes
+  sub: function (sub) {
+    if (sub && !sub.match(valid.sub)) {
+      throw new Error('Invalid sub referenced: ' + sub + '. Must be alphanumeric.');
     }
-    this.items.push(item);
-    this.process([], item, 'bool');
+    sub = sub ? sub + ':' : '';
+    if (!this.subs[sub]) {
+      this.subs[sub] = {};
+    }
+    var that = this;
+    var proxy = {
+    };
+    var nameFirst = ['get', 'set', 'getSetting', 'getType'];
+    nameFirst.forEach(function (name) {
+      proxy[name] = function () {
+        arguments[0] = sub + arguments[0];
+        return that[name].apply(that, arguments);
+      };
+    });
+    var append = ['add', 'getList', 'getHash', 'getHasKeys'];
+    append.forEach(function (name) {
+      proxy[name] = function () {
+        return that[name].apply(that, [].slice.call(arguments).concat([sub]));
+      };
+    });
+    return proxy;
+  },
+
+  add: function (item, sub) {
+    sub = sub || '';
+    if (this.subs[sub][item.name]) {
+      throw new Error('Settings section already defined: ' + (sub + item.name));
+    }
+    this.subs[sub][item.name] = item;
+    this.process([], item, 'bool', sub, this.subs[sub]);
   },
 
   clear: function(){
-    this.items = [];
-    this.named = {};
+    this.subs = {};
+    this.settings = {};
   },
 
-  process: function(pre, item, type) {
+  process: function(pre, item, type, sub) {
+    if (!item.name.match(valid.name)) {
+      throw new Error('Invalid setting name: ' + item.name + '. Must be alphanumeric.');
+    }
     pre = pre.concat([item.name]);
     var name = pre.join('.');
     type = item.type || type;
     item.type = type;
-    this.named[name] = item;
     if (item.settings) {
       item.settings.forEach(function(item) {
-        this.process(pre, item, type);
+        this.process(pre, item, type, sub);
       }.bind(this));
+    } else {
+      this.settings[sub + name] = item;
     }
   },
 
   get: function (name) {
-    return this.named[name].value;
+    if (!this.settings[name]) {
+      var msg = 'Invalid setting requested: ' + name;
+      if (this.failHard) {
+        throw new Error(msg);
+      }
+      this.options.log(msg);
+      return false;
+    }
+    return this.settings[name].value;
   },
 
   set: function (name, value) {
-    this.named[name].value = value;
+    if (!this.settings[name]) {
+      var msg = 'Trying to set an invalid setting: ' + name;
+      if (this.failHard) {
+        throw new Error(msg);
+      }
+      this.options.log(msg);
+      return;
+    }
+    this.settings[name].value = value;
   },
 
   getSetting: function (name) {
-    return this.named[name];
+    return this.settings[name];
   },
 
   getType: function (name) {
-    return this.named[name].type;
+    if (!this.settings[name]) {
+      var msg = 'Trying to get an invalid setting: ' + name;
+      if (this.failHard) {
+        throw new Error(msg);
+      }
+      this.options.log(msg);
+      return false;
+    }
+    return this.settings[name].type;
   },
 
   json: function () {
     var values = {};
-    var names = Object.keys(this.named);
+    var names = Object.keys(this.settings);
     for (var i=0; i<names.length; i++) {
-      if (typeof(this.named[names[i]].value) === 'undefined') {
+      if (typeof(this.settings[names[i]].value) === 'undefined') {
         continue;
       }
-      values[names[i]] = this.named[names[i]].value;
+      values[names[i]] = this.settings[names[i]].value;
     }
     return values;
   },
@@ -68,30 +135,33 @@ SettingsManager.prototype = {
   },
 
 /** get a list of settings values **/
-  getList: function (data) {
+  getList: function (data, sub) {
     var res = [];
+    sub = sub || '';
     for (var i=0; i<data.length; i++) {
-      res.push(this.named[data[i]].value);
+      res.push(this.get(sub + data[i]));
     }
     return res;
   },
 
 /** { key: settingName, ... } -> { key: settingValue } **/
-  getHash: function (data) {
+  getHash: function (data, sub) {
     var res = {}
       , keys = Object.keys(data);
+    sub = sub || '';
     for (var i=0; i<keys.length; i++) {
-      res[keys[i]] = this.named[data[keys[i]]].value;
+      res[keys[i]] = this.get(sub + data[keys[i]]);
     }
     return res;
   },
 
 /** { settingName: value, ... } -> { settingValue: value, ... } */
-  getHashKeys: function (data) {
+  getHashKeys: function (data, sub) {
     var res = {}
       , keys = Object.keys(data);
+    sub = sub || '';
     for (var i=0; i<keys.length; i++) {
-      res[this.named[keys[i]].value] = data[keys[i]];
+      res[this.get(sub + keys[i])] = data[keys[i]];
     }
     return res;
   }

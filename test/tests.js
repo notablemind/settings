@@ -8,6 +8,12 @@ describe('SettingsManager, when initialized', function(){
     mgr = new settings.SettingsManager("test");
   });
 
+  describe('sub', function () {
+    it('should fail on bad sub name', function () {
+      expect(mgr.sub.bind(mgr, 'a ')).to.throw(/alphanumeric/);
+    });
+  });
+
   describe('with a single item', function(){
     beforeEach(function(){
       mgr.add({name: 'key', value: true});
@@ -66,11 +72,23 @@ describe('SettingsManager, when initialized', function(){
       expect(mgr.json()).to.eql({xav: false, abc: true});
     });
 
-    it('should have items in order', function(){
-      expect(mgr.items[0].name).to.eql('xav');
-      expect(mgr.items[1].name).to.eql('abc');
+  });
+
+  describe('with a sub', function () {
+    var sub;
+    beforeEach(function () {
+      sub = mgr.sub('test');
+      sub.add({name: 'one', value: true});
+      sub.add({name: 'two', value: 'man'});
     });
 
+    it('should add things namespaced', function () {
+      expect(mgr.get('test:one')).to.be.true;
+    });
+
+    it('should getList namespaced', function () {
+      expect(sub.getList(['one', 'two'])).to.eql([true, 'man']);
+    });
   });
     
 });

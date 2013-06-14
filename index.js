@@ -14,6 +14,11 @@ SettingsManager.prototype = {
     this.process([], item, 'bool');
   },
 
+  clear: function(){
+    this.items = [];
+    this.named = {};
+  },
+
   process: function(pre, item, type) {
     pre = pre.concat([item.name]);
     var name = pre.join('.');

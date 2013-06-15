@@ -35,7 +35,7 @@ SettingsManager.prototype = {
         return that[name].apply(that, arguments);
       };
     });
-    var append = ['add', 'getList', 'getHash', 'getHasKeys'];
+    var append = ['add', 'getList', 'getHash', 'getHashKeys'];
     append.forEach(function (name) {
       proxy[name] = function () {
         return that[name].apply(that, [].slice.call(arguments).concat([sub]));
@@ -46,6 +46,9 @@ SettingsManager.prototype = {
 
   add: function (item, sub) {
     sub = sub || '';
+    if (!this.subs[sub]) {
+      this.subs[sub] = {};
+    }
     if (this.subs[sub][item.name]) {
       throw new Error('Settings section already defined: ' + (sub + item.name));
     }

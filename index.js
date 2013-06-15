@@ -44,6 +44,10 @@ SettingsManager.prototype = {
     return proxy;
   },
 
+  getSub: function (sub) {
+    return this.subs[sub ? sub + ':' : ''];
+  },
+
   add: function (item, sub) {
     sub = sub || '';
     if (!this.subs[sub]) {

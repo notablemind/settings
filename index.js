@@ -177,19 +177,14 @@ SettingsManager.prototype = {
 var single = new SettingsManager('default')
   , managers = {default: single};
 
-module.exports = {
-  SettingsManager: SettingsManager,
-  getSettings: function(name) {
-    name = name || 'default';
-    if (!managers[name]) {
-      managers[name] = new SettingsManager(name);
-    }
-    return managers[name];
-  }
-};
+module.exports = single;
 
-// make all the normal single.* available through module.exports
-Object.keys(SettingsManager.prototype).forEach(function(name){
-  module.exports[name] = single[name].bind(single);
-});
+single.SettingsManager = SettingsManager;
+single.getSettings = function(name) {
+  name = name || 'default';
+  if (!managers[name]) {
+    managers[name] = new SettingsManager(name);
+  }
+  return managers[name];
+};
 

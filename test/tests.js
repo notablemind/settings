@@ -63,6 +63,11 @@ describe('SettingsManager, when initialized', function(){
       expect(mgr.json()).to.eql({xav: false, abc: true});
     });
 
+    it('should load', function () {
+      mgr.load({xav: true});
+      expect(mgr.get('xav')).to.be.true;
+    });
+
     it('should getList', function () {
       expect(mgr.getList(['abc', 'xav'])).to.eql([true, false]);
     });

@@ -99,6 +99,14 @@ SettingsManager.prototype = {
     }
     return result;
   },
+
+  load: function (hash) {
+    for (var key in hash) {
+      // I think the right thing to do is ignore unrecognized values
+      if (!this.settings[key]) continue;
+      this.settings[key].value = hash[key];
+    }
+  },
   
   getList: function (list, path) {
     var self = this;
@@ -124,6 +132,11 @@ SettingsManager.prototype = {
       obj[this.get(path + key)] = hash[key];
     }
     return obj;
+  },
+
+  clear: function () {
+    this.all = {};
+    this.settings = {};
   },
 
   // Used internally to recursively add setting definitions

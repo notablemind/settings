@@ -5,6 +5,10 @@ var valid = {
   key: /^[^.]$/
 };
 
+function escapeRegex(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+};
+
 var SettingsManager = function (name, options) {
   if (name.indexOf('.') !== -1) {
     throw new Error('Invalid manager name; must not contain "."');
@@ -107,7 +111,47 @@ SettingsManager.prototype = {
       this.settings[key].value = hash[key];
     }
   },
-  
+
+  /*
+  getAll: function (path) {
+    var base = this.all
+      , res = [];
+    parts = path ? path.split('.') : [];
+    parts.forEach(function (part) {
+      base = base[part];
+    });
+    for (var key in base) {
+      if (key[0] === '_') continue;
+      res.push(base[key]);
+    }
+    return res;
+  },
+  */
+
+  // get all settings that match a glob-style pattern
+  // * will match anything but a period. ** will match anything
+  match: function (pattern) {
+    if (this.settings[pattern]) return [this.settings[pattern]];
+    if (pattern.indexOf('*') === -1) {
+      return [];
+    }
+    if (pattern === '**') {
+      pattern = true;
+    } else {
+      pattern = escapeRegex(pattern);
+      pattern = pattern.replace(/\\\*\\\*/g, '.*?');
+      pattern = pattern.replace(/\\\*/g, '[^.]*?');
+      pattern = new RegExp('^' + pattern + '$');
+    }
+    var settings = [];
+    for (var key in this.settings) {
+      if (pattern === true || pattern.test(key)) {
+        settings.push(this.settings[key]);
+      }
+    }
+    return settings;
+  },
+
   getList: function (list, path) {
     var self = this;
     path = path ? path + '.' : '';
@@ -151,8 +195,8 @@ SettingsManager.prototype = {
     path = path ? path + '.' : '';
     for (var key in items) {
       if (key === '_group' || key === '_type' || key === '_name') continue;
-      if (key[0] === '_' || key.indexOf('.') !== -1) {
-        throw new Error('invalid key name: ' + key + '. No periods and can\'t start with an underscore');
+      if (key[0] === '_' || key.indexOf('.') !== -1 || key.indexOf('*') !== -1) {
+        throw new Error('invalid key name: ' + key + '. No periods or asterisks and can\'t start with an underscore');
       }
       if (items[key]._group) {
         if (!base[key]) base[key] = {};

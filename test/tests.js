@@ -63,6 +63,20 @@ describe('SettingsManager, when initialized', function(){
       expect(mgr.json()).to.eql({xav: false, abc: true});
     });
 
+    it('should getList', function () {
+      expect(mgr.getList(['abc', 'xav'])).to.eql([true, false]);
+    });
+
+    it('should getHash', function () {
+      expect(mgr.getHash({one: 'abc', two: 'abc', three: 'xav'}))
+        .to.eql({one: true, two: true, three: false});
+    });
+
+    it('should getHaskKeys', function () {
+      expect(mgr.getHashKeys({abc: 4, xav: 6}))
+        .to.eql({true: 4, false: 6});
+    });
+
   });
 
   describe('with a sub', function () {

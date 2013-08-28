@@ -89,7 +89,7 @@ SettingsManager.prototype = {
       getHash: function (hash) {
         return self.getHash(hash, path);
       },
-      getHaskKeys: function (hash) {
+      getHashKeys: function (hash) {
         return self.getHashKeys(hash, path);
       }
     };

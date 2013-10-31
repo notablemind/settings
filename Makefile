@@ -1,13 +1,14 @@
 
-test: node_modules
-	@./node_modules/.bin/mocha -R spec
+test: lint test-only
+
+lint:
+	@jshint --verbose *.js *.json
+
+test-only:
+	@mocha -R spec
 
 coverage:
 	@mocha -r blanket -R html-cov > coverage.html
 	@open coverage.html
 
-node_modules:
-	@npm install
-
-.PHONY: test
-
+.PHONY: test lint test-only coverage

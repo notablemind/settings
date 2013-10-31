@@ -7,7 +7,7 @@ var valid = {
 
 function escapeRegex(s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
-};
+}
 
 var SettingsManager = function (name, options) {
   if (name.indexOf('.') !== -1) {

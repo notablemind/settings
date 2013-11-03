@@ -1,0 +1,12 @@
+{
+  "provider": {
+    "cache": true
+  },
+  "plugins": [{
+    "id": "node",
+    "enabled": true,
+    "config": {
+      "caching": "strict"
+    }
+  }]
+}

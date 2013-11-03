@@ -6,7 +6,8 @@
     "id": "node",
     "enabled": true,
     "config": {
-      "caching": "strict"
+      "caching": "strict",
+      "test": "make test"
     }
   }]
 }
